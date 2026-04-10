@@ -23,4 +23,13 @@ dynamic_batching {
   max_queue_delay_microseconds: 100
 }
 
-version_policy: { all: {} }
+version_policy: {
+  all {}
+}
+
+instance_group [
+  {
+    kind: KIND_CPU
+    count: 2
+  }
+]

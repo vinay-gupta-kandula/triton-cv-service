@@ -4,13 +4,13 @@
 
 This project demonstrates a complete end-to-end deployment of a computer vision model using **NVIDIA Triton Inference Server**. The goal was to take a trained YOLOv8 model, convert it into an optimized format, and serve it in a scalable, production-ready environment with support for batching, versioning, and performance benchmarking.
 
-The system is designed to simulate how real-world ML services operate — from model export and validation to deployment and performance testing.
+The system simulates a real-world ML inference service — covering model export, validation, deployment, optimization, and performance evaluation.
 
 ---
 
 ## 🧠 Architecture
 
-The pipeline is built using an **ensemble model architecture**, which chains together multiple stages of inference:
+The system is built using an **ensemble pipeline**, where multiple stages are chained together into a single inference workflow:
 
 ```
 Client Request
@@ -27,16 +27,16 @@ Final Output
 ### Components
 
 * **Preprocess**
-  Handles input normalization, reshaping, and formatting.
+  Handles normalization, resizing, and formatting of input tensors.
 
 * **YOLO Model (ONNX)**
   Core object detection model exported from YOLOv8.
 
 * **Postprocess**
-  Interprets model output into usable predictions.
+  Converts raw model outputs into meaningful predictions.
 
 * **Ensemble Model**
-  Connects all steps into a single inference pipeline.
+  Orchestrates all components into a unified pipeline.
 
 ---
 
@@ -165,13 +165,15 @@ python scripts/test_ensemble.py
 bash scripts/test_versioning.sh
 ```
 
-(For Windows users, use PowerShell equivalent if needed.)
+*(Windows users can use PowerShell equivalent commands.)*
 
 ---
 
 ## ⚡ Performance Benchmarking
 
 The performance of the model was evaluated using Triton’s `perf_analyzer`.
+
+Benchmarks were executed across concurrency levels ranging from **1 to 32**, simulating varying client load conditions.
 
 ### Run Benchmark
 
@@ -195,14 +197,15 @@ bash scripts/run_benchmark.sh
 ### 📊 Observations
 
 * Throughput increases initially with concurrency.
-* Latency increases as concurrency grows due to queuing.
-* Dynamic batching helps improve efficiency at higher loads.
+* Latency increases as concurrency grows due to queuing effects.
+* Dynamic batching improves throughput by grouping incoming requests under higher load.
+* The system was evaluated on CPU; GPU acceleration can further enhance performance.
 
 ---
 
 ## 🔄 Model Versioning
 
-The system supports multiple model versions:
+The system supports multiple versions of the YOLO model:
 
 ```
 yolo/
@@ -210,14 +213,27 @@ yolo/
 └── 2/
 ```
 
-Requests can target specific versions:
+Each version can be accessed independently:
 
 ```
 /v2/models/yolo/versions/1/infer
 /v2/models/yolo/versions/2/infer
 ```
 
-This enables **zero-downtime model updates**.
+This versioning mechanism enables **zero-downtime deployment**, allowing new models to be introduced without interrupting existing inference requests.
+
+---
+
+## ⚙️ Optimization & Scalability
+
+* **Dynamic Batching**
+  Groups requests to improve throughput and reduce latency under load.
+
+* **Model Versioning**
+  Enables safe deployment and rollback strategies.
+
+* **Instance Groups**
+  Multiple model instances are deployed to allow parallel inference execution, improving overall throughput.
 
 ---
 
@@ -225,11 +241,12 @@ This enables **zero-downtime model updates**.
 
 * ✔ ONNX model export and validation
 * ✔ Triton deployment using Docker
-* ✔ Ensemble pipeline (pre → model → post)
+* ✔ Ensemble inference pipeline (pre → model → post)
 * ✔ Dynamic batching for performance optimization
 * ✔ Model versioning support
-* ✔ Performance benchmarking
-* ✔ REST API inference endpoints
+* ✔ Parallel inference using multiple instances
+* ✔ Performance benchmarking using perf_analyzer
+* ✔ REST API-based inference endpoints
 
 ---
 
@@ -237,23 +254,21 @@ This enables **zero-downtime model updates**.
 
 During development, several practical challenges were encountered:
 
-* Handling strict Triton model repository structure
-* Debugging model loading and backend errors
+* Understanding Triton model repository structure
+* Debugging model loading and backend issues
 * Managing tensor shapes across pipeline stages
-* Understanding batching and versioning behavior
+* Implementing batching and versioning correctly
 
-These challenges helped build a deeper understanding of how production ML systems operate.
+These experiences provided valuable insights into how real-world ML systems are deployed and optimized.
 
 ---
 
 ## 🏁 Conclusion
 
-This project successfully demonstrates how to take a deep learning model from development to deployment using Triton. It highlights key aspects of real-world ML systems such as scalability, modular design, and performance optimization.
+This project demonstrates how to transition a deep learning model from development to deployment using Triton Inference Server. It highlights key principles of scalable ML systems, including modular design, performance optimization, and production readiness.
 
 ---
 
 ## 🙌 Acknowledgment
 
 This project was built as part of a hands-on learning experience in deploying machine learning models using modern MLOps tools.
-
-
