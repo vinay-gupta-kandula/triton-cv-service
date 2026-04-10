@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  triton:
+    image: nvcr.io/nvidia/tritonserver:23.12-py3
+    container_name: triton_server
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - C:/Users/kvina/Documents/partnr/triton-cv-service/model_repository:/models
+    command: [
+              "tritonserver",
+              "--model-repository=/models",
+              "--model-control-mode=explicit",
+              "--load-model=preprocess",
+              "--load-model=yolo",
+              "--load-model=postprocess",
+              "--load-model=ensemble_yolo"
+             ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v2/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
